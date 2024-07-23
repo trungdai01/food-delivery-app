@@ -19,8 +19,8 @@ class Product {
     if (json['products'] != null) {
       _products = <ProductModel>[];
       json['products'].forEach(
-        (v) {
-          _products.add(ProductModel.fromJson(v));
+        (productModel) {
+          _products.add(ProductModel.fromJson(productModel));
         },
       );
     }
@@ -63,5 +63,20 @@ class ProductModel {
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     typeId = json['type_id'];
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "id": id,
+      "name": name,
+      "description": description,
+      "price": price,
+      "stars": stars,
+      "location": location,
+      "img": img,
+      "created_at": createdAt,
+      "updated_at": updatedAt,
+      "type_Id": typeId,
+    };
   }
 }

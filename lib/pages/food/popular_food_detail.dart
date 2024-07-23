@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:food_delivery/controllers/cart_controller.dart';
 import 'package:food_delivery/controllers/popular_product_controller.dart';
+import 'package:food_delivery/controllers/product_controller.dart';
 import 'package:food_delivery/route/route_helper.dart';
 import 'package:food_delivery/utils/app_constants.dart';
 import 'package:food_delivery/utils/colors.dart';
@@ -14,12 +15,13 @@ import 'package:get/get.dart';
 
 class PopularFoodDetail extends StatelessWidget {
   final int pageId;
-  const PopularFoodDetail({super.key, required this.pageId});
+  final String arrivalPage;
+  const PopularFoodDetail({super.key, required this.pageId, required this.arrivalPage});
 
   @override
   Widget build(BuildContext context) {
     var product = Get.find<PopularProductController>().popularProductList[pageId];
-    Get.find<PopularProductController>().initProduct(product, Get.find<CartController>());
+    Get.find<ProductController>().initProduct(product, Get.find<CartController>());
     return Scaffold(
       backgroundColor: Colors.white,
       body: Stack(
@@ -47,41 +49,39 @@ class PopularFoodDetail extends StatelessWidget {
               children: [
                 GestureDetector(
                   onTap: () {
-                    Get.toNamed(RouteHelper.getInitial());
+                    Get.toNamed(arrivalPage);
                   },
                   child: const AppIcon(icon: Icons.arrow_back),
                 ),
-                GetBuilder<PopularProductController>(
-                  builder: (controller) {
+                GetBuilder<ProductController>(
+                  builder: (productController) {
                     return GestureDetector(
                       onTap: () {
-                        if (controller.totalItems > 0) {
+                        if (productController.totalItems > 0) {
                           Get.toNamed(RouteHelper.getFoodCart());
                         }
                       },
                       child: Stack(
                         children: [
                           const AppIcon(icon: Icons.shopping_cart_outlined),
-                          controller.totalItems > 0
-                              ? const Positioned(
+                          productController.totalItems > 0
+                              ? Positioned(
                                   right: 0,
                                   top: 0,
-                                  child: AppIcon(
-                                    icon: Icons.circle,
-                                    size: 20,
-                                    iconColor: Colors.transparent,
-                                    backgroundColor: AppColors.mainColor,
-                                  ),
-                                )
-                              : Container(),
-                          controller.totalItems > 0
-                              ? Positioned(
-                                  right: 3,
-                                  top: 2,
-                                  child: BigText(
-                                    text: "${controller.totalItems}",
-                                    size: 12,
-                                    color: Colors.white,
+                                  child: Container(
+                                    width: Dimensions.height20,
+                                    height: Dimensions.height20,
+                                    decoration: const BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: AppColors.mainColor,
+                                    ),
+                                    child: Center(
+                                      child: BigText(
+                                        text: "${productController.totalItems}",
+                                        size: 12,
+                                        color: Colors.white,
+                                      ),
+                                    ),
                                   ),
                                 )
                               : Container(),
@@ -129,8 +129,8 @@ class PopularFoodDetail extends StatelessWidget {
           ),
         ],
       ),
-      bottomNavigationBar: GetBuilder<PopularProductController>(
-        builder: (popularProduct) {
+      bottomNavigationBar: GetBuilder<ProductController>(
+        builder: (productController) {
           return Container(
             height: Dimensions.bottomHeightBar,
             padding: EdgeInsets.symmetric(
@@ -158,16 +158,16 @@ class PopularFoodDetail extends StatelessWidget {
                       children: [
                         GestureDetector(
                           onTap: () {
-                            popularProduct.setQuantity(false);
+                            productController.setQuantity(false);
                           },
                           child: const Icon(Icons.remove, color: AppColors.signColor),
                         ),
                         SizedBox(width: Dimensions.width10 / 2),
-                        BigText(text: "${popularProduct.inCartItems}"),
+                        BigText(text: "${productController.inCartItems}"),
                         SizedBox(width: Dimensions.width10 / 2),
                         GestureDetector(
                           onTap: () {
-                            popularProduct.setQuantity(true);
+                            productController.setQuantity(true);
                           },
                           child: const Icon(Icons.add, color: AppColors.signColor),
                         ),
@@ -177,7 +177,7 @@ class PopularFoodDetail extends StatelessWidget {
                 ),
                 GestureDetector(
                   onTap: () {
-                    popularProduct.addItem(product);
+                    productController.addItemToCart(product);
                   },
                   child: Container(
                     padding: EdgeInsets.symmetric(horizontal: Dimensions.width20),

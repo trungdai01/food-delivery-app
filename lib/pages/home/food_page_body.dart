@@ -51,15 +51,15 @@ class _FoodPageBodyState extends State<FoodPageBody> {
     return Column(
       children: [
         GetBuilder<PopularProductController>(
-          builder: (popularProducts) {
-            return popularProducts.isLoaded
+          builder: (popularProductController) {
+            return popularProductController.isLoaded
                 ? Container(
                     height: Dimensions.pageView,
                     child: PageView.builder(
                       controller: pageController,
-                      itemCount: popularProducts.popularProductList.length,
+                      itemCount: popularProductController.popularProductList.length,
                       itemBuilder: (context, position) {
-                        return _buildPageItem(position, popularProducts.popularProductList[position]);
+                        return _buildPageItem(position, popularProductController.popularProductList[position]);
                       },
                     ),
                   )
@@ -67,9 +67,9 @@ class _FoodPageBodyState extends State<FoodPageBody> {
           },
         ),
         GetBuilder<PopularProductController>(
-          builder: (popularProducts) {
+          builder: (popularProductController) {
             return DotsIndicator(
-              dotsCount: popularProducts.popularProductList.isEmpty ? 1 : popularProducts.popularProductList.length,
+              dotsCount: popularProductController.popularProductList.isEmpty ? 1 : popularProductController.popularProductList.length,
               position: _currPageValue,
               decorator: DotsDecorator(
                 activeColor: AppColors.mainColor,
@@ -101,16 +101,21 @@ class _FoodPageBodyState extends State<FoodPageBody> {
           ),
         ),
         GetBuilder<RecommendedProductController>(
-          builder: (recommendedProduct) {
-            return recommendedProduct.isLoaded
+          builder: (recommendedProductController) {
+            return recommendedProductController.isLoaded
                 ? ListView.builder(
                     physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
-                    itemCount: recommendedProduct.recommendedProductList.length,
-                    itemBuilder: (context, index) {
+                    itemCount: recommendedProductController.recommendedProductList.length,
+                    itemBuilder: (context, productIndex) {
                       return GestureDetector(
                         onTap: () {
-                          Get.toNamed(RouteHelper.getRecommendedFood(index));
+                          Get.toNamed(
+                            RouteHelper.getRecommendedFood(
+                              pageId: productIndex,
+                              arrivalPage: RouteHelper.getInitial(),
+                            ),
+                          );
                         },
                         child: Container(
                           margin: EdgeInsets.only(
@@ -129,7 +134,7 @@ class _FoodPageBodyState extends State<FoodPageBody> {
                                   image: DecorationImage(
                                     fit: BoxFit.cover,
                                     image: NetworkImage(
-                                      "${AppConstants.BASE_URL}${AppConstants.UPLOAD_URL}${recommendedProduct.recommendedProductList[index].img!}",
+                                      "${AppConstants.BASE_URL}${AppConstants.UPLOAD_URL}${recommendedProductController.recommendedProductList[productIndex].img!}",
                                     ),
                                   ),
                                 ),
@@ -150,7 +155,7 @@ class _FoodPageBodyState extends State<FoodPageBody> {
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
-                                        BigText(text: recommendedProduct.recommendedProductList[index].name!),
+                                        BigText(text: recommendedProductController.recommendedProductList[productIndex].name!),
                                         SizedBox(height: Dimensions.height10),
                                         const SmallText(text: "With chinese characteristics"),
                                         SizedBox(height: Dimensions.height10),
@@ -212,7 +217,12 @@ class _FoodPageBodyState extends State<FoodPageBody> {
         children: [
           GestureDetector(
             onTap: () {
-              Get.toNamed(RouteHelper.getPopularFood(index));
+              Get.toNamed(
+                RouteHelper.getPopularFood(
+                  pageId: index,
+                  arrivalPage: RouteHelper.getInitial(),
+                ),
+              );
             },
             child: Container(
               height: Dimensions.pageViewContainer,

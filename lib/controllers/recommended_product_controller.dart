@@ -20,7 +20,7 @@ class RecommendedProductController extends GetxController {
       _isLoaded = true;
       update(); // setState
     } else {
-      log("Could not get products recommended");
+      log("[RCD-PRODUCT-CTRL] Could not get recommended products");
     }
   }
 }

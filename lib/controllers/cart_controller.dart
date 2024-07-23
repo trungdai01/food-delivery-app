@@ -8,13 +8,13 @@ import 'package:get/get.dart';
 
 class CartController extends GetxController {
   final CartRepository cartRepository;
-
-  final Map<int, CartModel> _items = {};
+  Map<int, CartModel> _items = {};
   Map<int, CartModel> get items => _items;
+  List<CartModel> storageItems = [];
 
   CartController({required this.cartRepository});
 
-  bool existInCart(ProductModel product) {
+  bool isExistInCart(ProductModel product) {
     if (_items.containsKey(product.id)) {
       return true;
     } else {
@@ -24,19 +24,20 @@ class CartController extends GetxController {
 
   void addItem(ProductModel product, int quantity) {
     var totalQuantity = 0;
-    if (_items.containsKey(product.id!)) {
+    if (_items.containsKey(product.id)) {
       _items.update(
         product.id!,
-        (productInCart) {
-          totalQuantity = productInCart.quantity! + quantity;
+        (thisProductInCart) {
+          totalQuantity = thisProductInCart.quantity! + quantity;
           return CartModel(
-            id: productInCart.id,
-            name: productInCart.name,
-            img: productInCart.img,
-            price: productInCart.price,
-            quantity: productInCart.quantity! + quantity,
+            id: thisProductInCart.id,
+            name: thisProductInCart.name,
+            img: thisProductInCart.img,
+            price: thisProductInCart.price,
+            quantity: thisProductInCart.quantity! + quantity,
             isExist: true,
             time: DateTime.now().toString(),
+            product: product,
           );
         },
       );
@@ -48,7 +49,7 @@ class CartController extends GetxController {
         _items.putIfAbsent(
           product.id!,
           () {
-            log("[CART CONTROLLER] Adding item to the cart id: ${product.id!}, quantity: $quantity");
+            log("[CART CONTROLLER] Adding a new item to the cart id: ${product.id!}, quantity: $quantity");
             return CartModel(
               id: product.id,
               name: product.name,
@@ -57,30 +58,27 @@ class CartController extends GetxController {
               quantity: quantity,
               isExist: true,
               time: DateTime.now().toString(),
+              product: product,
             );
           },
         );
       } else {
         Get.snackbar(
           "Item count",
-          "You should at least add in one item in the cart!",
+          "You should at least add in one item into the cart!",
           backgroundColor: AppColors.mainBlackColor,
           colorText: Colors.white,
         );
       }
     }
+    cartRepository.addToCartList(getItems);
+    update();
   }
 
   int getQuantity(ProductModel product) {
     var quantity = 0;
-    if (_items.containsKey(product.id!)) {
-      _items.forEach(
-        (key, value) {
-          if (key == product.id!) {
-            quantity = value.quantity!;
-          }
-        },
-      );
+    if (_items.containsKey(product.id)) {
+      quantity = _items[product.id]!.quantity!;
     }
     return quantity;
   }
@@ -88,8 +86,8 @@ class CartController extends GetxController {
   int get totalItems {
     var totalQuantity = 0;
     _items.forEach(
-      (key, value) {
-        totalQuantity += value.quantity!;
+      (key, product) {
+        totalQuantity += product.quantity!;
       },
     );
     return totalQuantity;
@@ -97,9 +95,44 @@ class CartController extends GetxController {
 
   List<CartModel> get getItems {
     return _items.entries.map(
-      (e) {
-        return e.value;
+      (entry) {
+        return entry.value;
       },
     ).toList();
+  }
+
+  int get totalAmount {
+    var total = 0;
+    _items.forEach(
+      (key, product) {
+        total += product.quantity! * product.price!;
+      },
+    );
+    return total;
+  }
+
+  set setCart(List<CartModel> items) {
+    storageItems = items;
+    for (int i = 0; i < storageItems.length; i++) {
+      _items.putIfAbsent(
+        storageItems[i].product!.id!,
+        () => storageItems[i],
+      );
+    }
+  }
+
+  List<CartModel> getCartData() {
+    setCart = cartRepository.getCartList();
+    return storageItems;
+  }
+
+  void addToCartHistoryList() {
+    cartRepository.addToCartHistoryList();
+    clear();
+  }
+
+  void clear() {
+    _items = {};
+    update();
   }
 }
