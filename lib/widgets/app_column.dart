@@ -7,7 +7,12 @@ import 'package:food_delivery/widgets/small_text.dart';
 
 class AppColumn extends StatelessWidget {
   final String text;
-  const AppColumn({super.key, required this.text});
+  final int? ratingStars;
+  const AppColumn({
+    super.key,
+    required this.text,
+    this.ratingStars = 5,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +25,7 @@ class AppColumn extends StatelessWidget {
           children: [
             Wrap(
               children: List.generate(
-                5,
+                ratingStars!,
                 (index) => const Icon(
                   Icons.star,
                   color: AppColors.mainColor,

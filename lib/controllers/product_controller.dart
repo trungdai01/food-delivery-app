@@ -1,8 +1,9 @@
-import 'dart:developer';
+// import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:food_delivery/controllers/cart_controller.dart';
 import 'package:food_delivery/models/cart_model.dart';
 import 'package:food_delivery/models/product_model.dart';
+import 'package:food_delivery/utils/app_constants.dart';
 import 'package:food_delivery/utils/colors.dart';
 import 'package:get/get.dart';
 
@@ -14,7 +15,7 @@ class ProductController extends GetxController {
 
   late CartController _cart;
   int get totalItems => _cart.totalItems; // for total items of products
-  List<CartModel> get getItems => _cart.getItems;
+  List<CartModel> get getItems => _cart.getItemList;
 
   ProductController();
 
@@ -22,8 +23,7 @@ class ProductController extends GetxController {
     _quantity = 0;
     _inCartItems = 0;
     _cart = cart;
-    bool isExist = _cart.isExistInCart(product);
-    if (isExist) {
+    if (_cart.isExistInCart(product)) {
       _inCartItems = _cart.getQuantity(product);
     }
   }
@@ -34,12 +34,12 @@ class ProductController extends GetxController {
     } else {
       _quantity = checkQuantity(_quantity - 1);
     }
-    log("[setQuantity] Quantity: $_quantity, _inCartItems: $_inCartItems, inCartItems: $inCartItems");
+    // log("[setQuantity] Quantity: $_quantity, _inCartItems: $_inCartItems, inCartItems: $inCartItems");
     update();
   }
 
   int checkQuantity(int quantity) {
-    log("[checkQuantity] Quantity: $quantity");
+    // log("[checkQuantity] Quantity: $quantity");
     if ((_inCartItems + quantity) < 0) {
       Get.snackbar(
         "Item count",
@@ -52,14 +52,14 @@ class ProductController extends GetxController {
         return _quantity;
       }
       return 0;
-    } else if ((_inCartItems + quantity) > 20) {
+    } else if ((_inCartItems + quantity) > AppConstants.MAX_QUANTITY) {
       Get.snackbar(
         "Item count",
         "You can't add more!",
         backgroundColor: AppColors.mainBlackColor,
         colorText: Colors.white,
       );
-      return (_inCartItems == 20) ? 0 : (20 - _inCartItems);
+      return AppConstants.MAX_QUANTITY - _inCartItems;
     } else {
       return quantity;
     }

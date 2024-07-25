@@ -69,7 +69,9 @@ class _FoodPageBodyState extends State<FoodPageBody> {
         GetBuilder<PopularProductController>(
           builder: (popularProductController) {
             return DotsIndicator(
-              dotsCount: popularProductController.popularProductList.isEmpty ? 1 : popularProductController.popularProductList.length,
+              dotsCount: popularProductController.popularProductList.isEmpty
+                  ? 1
+                  : popularProductController.popularProductList.length,
               position: _currPageValue,
               decorator: DotsDecorator(
                 activeColor: AppColors.mainColor,
@@ -155,7 +157,9 @@ class _FoodPageBodyState extends State<FoodPageBody> {
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
-                                        BigText(text: recommendedProductController.recommendedProductList[productIndex].name!),
+                                        BigText(
+                                            text: recommendedProductController
+                                                .recommendedProductList[productIndex].name!),
                                         SizedBox(height: Dimensions.height10),
                                         const SmallText(text: "With chinese characteristics"),
                                         SizedBox(height: Dimensions.height10),
@@ -271,7 +275,10 @@ class _FoodPageBodyState extends State<FoodPageBody> {
                   left: Dimensions.height15,
                   right: Dimensions.height15,
                 ),
-                child: AppColumn(text: popularProduct.name!),
+                child: AppColumn(
+                  text: popularProduct.name!,
+                  ratingStars: popularProduct.stars!,
+                ),
               ),
             ),
           ),

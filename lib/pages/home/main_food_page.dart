@@ -1,4 +1,4 @@
-import 'dart:developer';
+// import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:food_delivery/pages/home/food_page_body.dart';
 import 'package:food_delivery/utils/colors.dart';
@@ -29,7 +29,11 @@ class _MainFoodPageState extends State<MainFoodPage> {
               children: [
                 const Column(
                   children: [
-                    BigText(text: "Vietnam", color: AppColors.mainColor, size: 30),
+                    BigText(
+                      text: "Vietnam",
+                      color: AppColors.mainColor,
+                      size: 30,
+                    ),
                     Row(
                       children: [
                         SmallText(text: "Ho Chi Minh", color: Colors.black54),

@@ -57,9 +57,7 @@ class PopularFoodDetail extends StatelessWidget {
                   builder: (productController) {
                     return GestureDetector(
                       onTap: () {
-                        if (productController.totalItems > 0) {
-                          Get.toNamed(RouteHelper.getFoodCart());
-                        }
+                        Get.toNamed(RouteHelper.getFoodCart());
                       },
                       child: Stack(
                         children: [
@@ -114,7 +112,10 @@ class PopularFoodDetail extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  AppColumn(text: product.name),
+                  AppColumn(
+                    text: product.name,
+                    ratingStars: product.stars,
+                  ),
                   SizedBox(height: Dimensions.height20),
                   const BigText(text: "Introduction"),
                   SizedBox(height: Dimensions.height20),

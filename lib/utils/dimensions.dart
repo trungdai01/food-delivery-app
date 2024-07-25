@@ -47,4 +47,6 @@ class Dimensions {
 
   //splash screen dimensions
   static double splashImg = screenHeight / 3.56;
+
+  static double cartItem = screenHeight / 11.125;
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:food_delivery/pages/cart/cart_history_page.dart';
 import 'package:food_delivery/pages/home/main_food_page.dart';
 import 'package:food_delivery/utils/colors.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
@@ -11,14 +12,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   late PersistentTabController _controller;
 
   List<Widget> _screens() {
     return [
       const MainFoodPage(),
       const Center(child: Text("next page")),
-      const Center(child: Text("next next page")),
+      const CartHistoryPage(),
       const Center(child: Text("next next next page")),
     ];
   }
@@ -33,7 +33,7 @@ class _HomePageState extends State<HomePage> {
       ),
       PersistentBottomNavBarItem(
         icon: const Icon(Icons.archive),
-        title: ("History"),
+        title: ("Archive"),
         activeColorPrimary: AppColors.mainColor,
         inactiveColorPrimary: Colors.grey.shade900,
       ),

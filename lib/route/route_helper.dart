@@ -1,5 +1,5 @@
 import 'package:food_delivery/pages/home/home_page.dart';
-import 'package:food_delivery/pages/home/main_food_page.dart';
+// import 'package:food_delivery/pages/home/main_food_page.dart';
 import 'package:food_delivery/pages/food/popular_food_detail.dart';
 import 'package:food_delivery/pages/food/recommended_food_detail.dart';
 import 'package:food_delivery/pages/cart/cart_page.dart';
@@ -62,7 +62,9 @@ class RouteHelper {
     ),
     GetPage(
       name: foodCart,
-      page: () => const CartPage(),
+      page: () {
+        return const CartPage();
+      },
       transition: Transition.fadeIn,
     ),
   ];
