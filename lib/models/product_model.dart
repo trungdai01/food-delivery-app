@@ -12,7 +12,7 @@ class Product {
     _products = products;
   }
 
-  Product.fromJson(Map<String, dynamic> json) {
+  Product.deserialize(Map<String, dynamic> json) {
     _totalSize = json['total_size'];
     _typeId = json['type_id'];
     _offset = json['offset'];
@@ -20,7 +20,7 @@ class Product {
       _products = <ProductModel>[];
       json['products'].forEach(
         (productModel) {
-          _products.add(ProductModel.fromJson(productModel));
+          _products.add(ProductModel.deserialize(productModel));
         },
       );
     }
@@ -52,7 +52,7 @@ class ProductModel {
     this.typeId,
   });
 
-  ProductModel.fromJson(Map<String, dynamic> json) {
+  ProductModel.deserialize(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
     description = json['description'];

@@ -1,10 +1,13 @@
 // import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:food_delivery/controllers/popular_product_controller.dart';
+import 'package:food_delivery/controllers/recommended_product_controller.dart';
 import 'package:food_delivery/pages/home/food_page_body.dart';
 import 'package:food_delivery/utils/colors.dart';
 import 'package:food_delivery/utils/dimensions.dart';
 import 'package:food_delivery/widgets/big_text.dart';
 import 'package:food_delivery/widgets/small_text.dart';
+import 'package:get/get.dart';
 
 class MainFoodPage extends StatefulWidget {
   const MainFoodPage({super.key});
@@ -16,10 +19,16 @@ class MainFoodPage extends StatefulWidget {
 class _MainFoodPageState extends State<MainFoodPage> {
   @override
   Widget build(BuildContext context) {
+    Future<void> loadResources() async {
+      await Get.find<PopularProductController>().getPopularProductList();
+      await Get.find<RecommendedProductController>().getRecommendedProductList();
+    }
+
     // log("[MAIN_FOOD_PAGE] Current height is ${MediaQuery.of(context).size.height}");
     // log("[MAIN_FOOD_PAGE] Current width is ${MediaQuery.of(context).size.width}");
-    return Scaffold(
-      body: Column(
+    return RefreshIndicator(
+      onRefresh: loadResources,
+      child: Column(
         children: [
           Container(
             margin: EdgeInsets.only(top: Dimensions.height45, bottom: Dimensions.height15),

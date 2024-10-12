@@ -62,9 +62,7 @@ class RouteHelper {
     ),
     GetPage(
       name: foodCart,
-      page: () {
-        return const CartPage();
-      },
+      page: () => const CartPage(),
       transition: Transition.fadeIn,
     ),
   ];

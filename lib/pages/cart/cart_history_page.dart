@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:food_delivery/base/empty_cart_page.dart';
 import 'package:food_delivery/controllers/cart_controller.dart';
 import 'package:food_delivery/models/cart_model.dart';
 import 'package:food_delivery/route/route_helper.dart';
@@ -32,6 +33,16 @@ class CartHistoryPage extends StatelessWidget {
     List<String> timeOrderList = itemsPerOrder.entries.map((entry) => entry.key).toList();
     var indexCounter = 0;
 
+    Widget getTime(int index) {
+      var outputTime = DateTime.now().toString();
+      if (cartHistoryList.isNotEmpty) {
+        DateTime parseTime = DateFormat("yyyy-MM-dd HH:mm:ss").parse(cartHistoryList[index].time!);
+        var inputTime = DateTime.parse(parseTime.toString());
+        outputTime = DateFormat("dd/MM/yyyy HH:mm").format(inputTime);
+      }
+      return BigText(text: outputTime);
+    }
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.mainColor,
@@ -51,124 +62,133 @@ class CartHistoryPage extends StatelessWidget {
       ),
       body: Column(
         children: [
-          Expanded(
-            child: Container(
-              // height: Dimensions.height20 * 1,
-              margin: EdgeInsets.only(
-                top: Dimensions.height10,
-                left: Dimensions.width20,
-                right: Dimensions.width20,
-              ),
-              child: MediaQuery.removePadding(
-                removeTop: true,
-                context: context,
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: itemsPerOrder.length,
-                  itemBuilder: (context, order) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        (() {
-                          DateTime parseTime =
-                              DateFormat("yyyy-MM-dd HH:mm:ss").parse(cartHistoryList[indexCounter].time!);
-                          var inputTime = DateTime.parse(parseTime.toString());
-                          var outputTime = DateFormat("dd/MM/yyyy HH:mm").format(inputTime);
-                          return BigText(text: outputTime);
-                        }()),
-                        SizedBox(height: Dimensions.height10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              width: Dimensions.width10 * 25,
-                              child: SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Wrap(
-                                      children: List.generate(
-                                        itemsPerOrderList[order],
-                                        (item) {
-                                          return Container(
-                                            height: Dimensions.cartItem,
-                                            width: Dimensions.cartItem,
-                                            margin: EdgeInsets.only(right: Dimensions.width10 / 2),
-                                            decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.circular(Dimensions.radius15 / 2),
-                                              image: DecorationImage(
-                                                fit: BoxFit.cover,
-                                                image: NetworkImage(
-                                                  "${AppConstants.BASE_URL}${AppConstants.UPLOAD_URL}${cartHistoryList[indexCounter++].img!}",
+          GetBuilder<CartController>(
+            builder: (cartController) {
+              return cartController.getCartHistoryList.isNotEmpty
+                  ? Expanded(
+                      child: Container(
+                        // height: Dimensions.height20 * 1,
+                        margin: EdgeInsets.only(
+                          top: Dimensions.height10,
+                          left: Dimensions.width20,
+                          right: Dimensions.width20,
+                        ),
+                        child: MediaQuery.removePadding(
+                          removeTop: true,
+                          context: context,
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: itemsPerOrder.length,
+                            itemBuilder: (context, order) {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  getTime(indexCounter),
+                                  SizedBox(height: Dimensions.height10),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      SizedBox(
+                                        width: Dimensions.width10 * 25,
+                                        child: SingleChildScrollView(
+                                          scrollDirection: Axis.horizontal,
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Wrap(
+                                                children: List.generate(
+                                                  itemsPerOrderList[order],
+                                                  (item) {
+                                                    return Container(
+                                                      height: Dimensions.cartItem,
+                                                      width: Dimensions.cartItem,
+                                                      margin: EdgeInsets.only(right: Dimensions.width10 / 2),
+                                                      decoration: BoxDecoration(
+                                                        borderRadius: BorderRadius.circular(Dimensions.radius15 / 2),
+                                                        image: DecorationImage(
+                                                          fit: BoxFit.cover,
+                                                          image: NetworkImage(
+                                                            "${AppConstants.BASE_URL}${AppConstants.UPLOAD_URL}${cartHistoryList[indexCounter++].img!}",
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: Dimensions.cartItem,
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                          crossAxisAlignment: CrossAxisAlignment.end,
+                                          children: [
+                                            const SmallText(
+                                              text: "Total",
+                                              color: AppColors.titleColor,
+                                            ),
+                                            BigText(text: "${itemsPerOrderList[order]} Items"),
+                                            GestureDetector(
+                                              onTap: () {
+                                                log(timeOrderList[order]);
+                                                Map<int, CartModel> modifyOrderCart = {};
+                                                for (int index = 0; index < cartHistoryList.length; index++) {
+                                                  if (cartHistoryList[index].time == timeOrderList[order]) {
+                                                    log("product id: ${cartHistoryList[index].id}");
+                                                    modifyOrderCart.putIfAbsent(
+                                                      cartHistoryList[index].id!,
+                                                      () => CartModel.deserialize(
+                                                          jsonDecode(jsonEncode(cartHistoryList[index]))),
+                                                    );
+                                                  }
+                                                }
+                                                Get.find<CartController>().setCartItems = modifyOrderCart;
+                                                Get.find<CartController>().addToCartRepository();
+                                                Get.toNamed(RouteHelper.getFoodCart());
+                                              },
+                                              child: Container(
+                                                padding: EdgeInsets.symmetric(
+                                                  horizontal: Dimensions.width10,
+                                                  vertical: Dimensions.height10 / 2,
+                                                ),
+                                                decoration: BoxDecoration(
+                                                  borderRadius: BorderRadius.circular(Dimensions.radius15 / 3),
+                                                  border: Border.all(
+                                                    width: 1,
+                                                    color: AppColors.mainColor,
+                                                  ),
+                                                ),
+                                                child: const SmallText(
+                                                  text: "See more",
+                                                  color: AppColors.mainColor,
                                                 ),
                                               ),
                                             ),
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Container(
-                              height: Dimensions.cartItem,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  const SmallText(
-                                    text: "Total",
-                                    color: AppColors.titleColor,
-                                  ),
-                                  BigText(text: "${itemsPerOrderList[order]} Items"),
-                                  GestureDetector(
-                                    onTap: () {
-                                      log(timeOrderList[order]);
-                                      Map<int, CartModel> modifyOrderCart = {};
-                                      for (int index = 0; index < cartHistoryList.length; index++) {
-                                        if (cartHistoryList[index].time == timeOrderList[order]) {
-                                          log("product id: ${cartHistoryList[index].id}");
-                                          modifyOrderCart.putIfAbsent(
-                                            cartHistoryList[index].id!,
-                                            () => CartModel.fromJson(jsonDecode(jsonEncode(cartHistoryList[index]))),
-                                          );
-                                        }
-                                      }
-                                      Get.find<CartController>().setCartItems = modifyOrderCart;
-                                      Get.find<CartController>().addToCartRepository();
-                                      Get.toNamed(RouteHelper.getFoodCart());
-                                    },
-                                    child: Container(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: Dimensions.width10,
-                                        vertical: Dimensions.height10 / 2,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(Dimensions.radius15 / 3),
-                                        border: Border.all(
-                                          width: 1,
-                                          color: AppColors.mainColor,
+                                          ],
                                         ),
                                       ),
-                                      child: const SmallText(
-                                        text: "See more",
-                                        color: AppColors.mainColor,
-                                      ),
-                                    ),
+                                    ],
                                   ),
                                 ],
-                              ),
-                            ),
-                          ],
+                              );
+                            },
+                          ),
                         ),
-                      ],
+                      ),
+                    )
+                  : SizedBox(
+                      height: MediaQuery.of(context).size.height / 1.5,
+                      child: const Center(
+                        child: EmptyCartPage(
+                          notificationText: "You didn't buy anything so far!",
+                          imagePath: "assets/images/empty_box.png",
+                        ),
+                      ),
                     );
-                  },
-                ),
-              ),
-            ),
+            },
           ),
         ],
       ),
