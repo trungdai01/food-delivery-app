@@ -21,7 +21,7 @@ class CartModel {
     this.product,
   });
 
-  CartModel.deserialize(Map<String, dynamic> json) {
+  CartModel.fromJSON(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
     price = json['price'];
@@ -29,7 +29,7 @@ class CartModel {
     quantity = json['quantity'];
     time = json['time'];
     isExist = json['isExist'];
-    product = ProductModel.deserialize(json['product']);
+    product = ProductModel.fromJSON(json['product']);
   }
 
   Map<String, dynamic> toJson() {

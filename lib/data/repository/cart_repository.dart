@@ -27,7 +27,7 @@ class CartRepository {
         : [];
     List<CartModel> itemList = [];
     for (int index = 0; index < itemStringList.length; index++) {
-      itemList.add(CartModel.deserialize(jsonDecode(itemStringList[index])));
+      itemList.add(CartModel.fromJSON(jsonDecode(itemStringList[index])));
     }
     return itemList;
   }
@@ -49,7 +49,7 @@ class CartRepository {
     List<CartModel> itemHistoryList = [];
 
     for (int index = 0; index < cartHistory.length; index++) {
-      itemHistoryList.add(CartModel.deserialize(jsonDecode(cartHistory[index])));
+      itemHistoryList.add(CartModel.fromJSON(jsonDecode(cartHistory[index])));
     }
     // log("[CART REPOSITORY] cartHistoryList: ${itemHistoryList[0].time}");
     return itemHistoryList;

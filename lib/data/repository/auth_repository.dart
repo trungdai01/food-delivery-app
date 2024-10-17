@@ -14,7 +14,7 @@ class AuthRepository {
   });
 
   Future<Response> registration(SignUpModel signUpModel) async {
-    Response response = await apiClient.postData(AppConstants.REGISTRATION_URI, signUpModel.serialize());
+    Response response = await apiClient.postData(AppConstants.REGISTRATION_URI, signUpModel.toJSON());
     return response;
   }
 

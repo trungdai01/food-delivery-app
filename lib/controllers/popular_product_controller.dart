@@ -16,7 +16,7 @@ class PopularProductController extends GetxController {
     Response response = await popularProductRepository.getPopularProductList();
     if (response.statusCode == 200) {
       _popularProductList = [];
-      _popularProductList.addAll(Product.deserialize(response.body).products);
+      _popularProductList.addAll(Product.fromJSON(response.body).products);
       _isLoaded = true;
       update();
     } else {

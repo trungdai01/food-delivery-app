@@ -140,8 +140,11 @@ class CartHistoryPage extends StatelessWidget {
                                                     log("product id: ${cartHistoryList[index].id}");
                                                     modifyOrderCart.putIfAbsent(
                                                       cartHistoryList[index].id!,
-                                                      () => CartModel.deserialize(
-                                                          jsonDecode(jsonEncode(cartHistoryList[index]))),
+                                                      () => CartModel.fromJSON(
+                                                        jsonDecode(
+                                                          jsonEncode(cartHistoryList[index]),
+                                                        ),
+                                                      ),
                                                     );
                                                   }
                                                 }

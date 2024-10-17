@@ -72,7 +72,7 @@ class _FoodPageBodyState extends State<FoodPageBody> {
               dotsCount: popularProductController.popularProductList.isEmpty
                   ? 1
                   : popularProductController.popularProductList.length,
-              position: _currPageValue,
+              position: _currPageValue.toInt(),
               decorator: DotsDecorator(
                 activeColor: AppColors.mainColor,
                 size: const Size.square(9.0),

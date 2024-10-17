@@ -11,7 +11,7 @@ class SignUpModel {
     required this.phone,
   });
 
-  Map<String, dynamic> serialize() {
+  Map<String, dynamic> toJSON() {
     final Map<String, dynamic> data = <String, dynamic>{
       "email": email,
       "password": password,

@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
               // ),
               initialRoute: RouteHelper.getSplashPage(),
               getPages: RouteHelper.routes,
-              home: const SignInPage(),
+            //   home: const SignInPage(),
             );
           },
         );
